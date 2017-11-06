@@ -87,12 +87,31 @@ var palindrome = function(string) {
 // modulo(17,5) // 2
 // modulo(22,6) // 4
 var modulo = function(x, y) {
+    var sign = x < 0 ? -1 : 1;
+    var dividend = Math.abs(x);
+    var divisor = Math.abs(y);
 
+    if (dividend === 0) {
+        return 0;
+    }
+    if (dividend === 0 || isNaN(dividend) || isNaN(divisor)) {
+        return NaN;
+    }
+    if (dividend < divisor) {
+        return sign * dividend;
+    }
+
+    var counter = dividend;
+    while (counter >= divisor) {
+        counter = counter - divisor;
+    }
+    return sign * counter;
 };
 
 // 12. Write a function that multiplies two numbers without using the * operator  or
 // JavaScript's Math object.
 var multiply = function(x, y) {
+    
 };
 
 // 13. Write a function that divides two numbers without using the / operator  or
