@@ -5,16 +5,42 @@
 // Example:  5! = 5 x 4 x 3 x 2 x 1 = 120
 // factorial(5);  // 120
 var factorial = function(n) {
+    if(n < 0){return null;}
+    if(n === 1 || n === 0){return 1;}
+
+    return n * factorial(n - 1);
 };
 
 // 2. Compute the sum of an array of integers.
 // Example:  sum([1, 2, 3, 4, 5, 6]);  // 21
-var sum = function(array) {
+var sum = function (array, total = 0) {
+    var copy = array.slice(0);
+    if (array.length === 0) { return total; }
+    total += copy.splice(0, 1)[0];
+    return sum(copy, total);
 };
+
+
+
+
+
 
 // 3. Sum all numbers in an array containing nested arrays.
 // Example: arraySum([1,[2,3],[[4]],5]); // 15
-var arraySum = function(array) {
+var arraySum = function(array, total = 0) {
+    var flatten = function(arr) {
+        return arr.reduce(function (flat, toFlatten) {
+            return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
+        }, []);
+    };
+    var arrr = flatten(array);
+    //console.log(arrr);
+    if (array.length === 0) { return total; }
+    total += arrr.splice(0, 1)[0];
+    return arraySum(arrr, total);
+
+
+
 };
 
 // 4. Check if a number is even.
@@ -61,6 +87,7 @@ var palindrome = function(string) {
 // modulo(17,5) // 2
 // modulo(22,6) // 4
 var modulo = function(x, y) {
+
 };
 
 // 12. Write a function that multiplies two numbers without using the * operator  or
@@ -70,7 +97,14 @@ var multiply = function(x, y) {
 
 // 13. Write a function that divides two numbers without using the / operator  or
 // JavaScript's Math object.
-var divide = function(x, y) {
+var divide = function (x, y, a) {
+    a = a || x;
+    //console.log(a);
+    if(x * y < a){ return 'error'; }
+    if (x * y === a) { return x; }
+    //console.log(x * y);
+    return divide(x - 0.001, y, a);
+
 };
 
 // 14. Find the greatest common divisor (gcd) of two positive numbers.  The GCD of two
@@ -116,10 +150,21 @@ var rMap = function(array, callback) {
 };
 
 // 21. Write a function that counts the number of times a key occurs in an object.
-// var testobj = {'e': {'x':'y'}, 't':{'r': {'e':'r'}, 'p': {'y':'r'}},'y':'e'};
+//var testobj = {'e': {'x':'y'}, 't':{'r': {'e':'r'}, 'p': {'y':'r'}},'y':'e'};
 // countKeysInObj(testobj, 'r') // 1
 // countKeysInObj(testobj, 'e') // 2
-var countKeysInObj = function(obj, key) {
+var countKeysInObj = function (obj, key) {
+    var count = 0;
+    for (var prop in obj) {
+        if (prop === key) {
+            count++;
+        }
+        var value = obj[prop];
+        if (typeof value === 'object') {
+            count += countKeysInObj(value, key); 
+        }
+    }
+    return count;
 };
 
 // 22. Write a function that counts the number of times a value occurs in an object.
@@ -127,11 +172,35 @@ var countKeysInObj = function(obj, key) {
 // countValuesInObj(testobj, 'r') // 2
 // countValuesInObj(testobj, 'e') // 1
 var countValuesInObj = function(obj, value) {
+    var count = 0;
+    for (var prop in obj) {
+        if (obj[prop] === value) {
+            count++;
+        }
+        var val = obj[prop];
+        if (typeof val === 'object') {
+            count += countValuesInObj(val, value);
+        }
+    }
+    return count;
+
 };
 
 // 23. Find all keys in an object (and nested objects) by a provided name and rename
 // them to a provided new name while preserving the value stored at that key.
 var replaceKeysInObj = function(obj, key, newKey) {
+    var count = 0;
+    for (var prop in obj) {
+        if (prop === key) {
+            obj[newKey] = obj[prop]
+            delete obj[prop];
+        }
+        var value = obj[prop];
+        if (typeof value === 'object') {
+            replaceKeysInObj(value, key, newKey);
+        }
+    }
+    return obj;
 };
 
 // 24. Get the first n Fibonacci numbers.  In the Fibonacci Sequence, each subsequent
@@ -170,12 +239,31 @@ var capitalizeFirst = function(array) {
 //   e: {e: {e: 2}, ee: 'car'}
 // };
 // nestedEvenSum(obj1); // 10
-var nestedEvenSum = function(obj) {
+var nestedEvenSum = function (obj) {
+    var total = total || 0;
+    for (var prop in obj) {
+        var val = obj[prop];
+        if (obj[prop] % 2 === 0) {
+            total += val;
+        }
+
+        if (typeof val === 'object') {
+            total += nestedEvenSum(val);
+        }
+    }
+    return total;
+
+
+
+
 };
 
 // 29. Flatten an array containing nested arrays.
 // Example: flatten([1,[2],[3,[[4]]],5]); // [1,2,3,4,5]
-var flatten = function(arrays) {
+var flatten = function(arr) {
+    return arr.reduce(function (flat, toFlatten) {
+        return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
+    }, []);
 };
 
 // 30. Given a string, return an object containing tallies of each letter.
@@ -194,7 +282,11 @@ var compress = function(list) {
 // 32. Augument every element in a list with a new value where each element is an array
 // itself.
 // Example: augmentElements([[],[3],[7]], 5); // [[5],[3,5],[7,5]]
-var augmentElements = function(array, aug) {
+var augmentElements = function(array, aug, i = 0) {
+    if(i === array.length){return array;}
+    array[i].push(aug);
+    //console.log(array);
+    return augmentElements(array, aug, ++i);
 };
 
 // 33. Reduce a series of zeroes to a single 0.
@@ -219,18 +311,31 @@ var numToText = function(str) {
 // *** EXTRA CREDIT ***
 
 // 36. Return the number of times a tag occurs in the DOM.
-var tagCount = function(tag, node) {
+var tagCount = function(tag, node, count = 0) {
+
+return document.getElementsByTagName(tag).length;
+
+
 };
 
 // 37. Write a function for binary search.
 // Sample array:  [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
 // console.log(binarySearch(5)) will return '5'
 
-var binarySearch = function(array, target, min, max) {
+var binarySearch = function(array, target, min = 0, max) {
+
+max = array.length;
+if(array[min] === target){return min;}
+if(min === max){return null;}
+return binarySearch(array, target, ++min, max)
 };
 
 // 38. Write a merge sort function.
 // Sample array:  [34,7,23,32,5,62]
 // Sample output: [5,7,23,32,34,62]
-var mergeSort = function(array) {
+var mergeSort = function(array, arr = [], i = 0) {
+    arr.push(array[i])
+    if (i === array.length - 1) { return arr.sort(function (a, b) { return a - b; })}
+    return mergeSort(array, arr, ++i)
+    
 };
