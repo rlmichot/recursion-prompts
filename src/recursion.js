@@ -86,24 +86,67 @@ var palindrome = function(string) {
 // // modulo(5,2) // 1
 // // modulo(17,5) // 2
 // // modulo(22,6) // 4
-var modulo = function(x, y) {
+var modulo = function(x, y, count, rTotal) {
+    if( x < 0 && y < 0 && x > y ){ return x; }
+    if (x < 0 && y < 0 && x < y) { return -(y -  x); }
+    if (x < 0 && y > 0 ) { return -modulo(-x, y, ++count, rTotal); }
+    if( x < y ) { return x; }
+    if (x === 0 && y === 0) { return NaN; }
+    
+    if (x === 0 ) { return; }
+    
+    count = count || 1;
+    rTotal = rTotal || 0;
+    if (rTotal + y === x) { return 0; }
+    if (rTotal + y > x) { return x - rTotal; }
+    rTotal += y;
+
+
+    return modulo(x, y, ++count, rTotal);
+
 
 };
 
 // // 12. Write a function that multiplies two numbers without using the * operator  or
 // // JavaScript's Math object.
-var multiply = function(x, y) {
+var multiply = function(x, y, count, total, posOrNeg) {
+
+    if(posOrNeg !== 1){if ( !posOrNeg && (x < 0 && y > 0 || x > 0 && y < 0) || !posOrNeg === 1 || !posOrNeg === 2 ){
+        posOrNeg = 1;
+    }}
+
+    if(x === 0 || y === 0){ return 0; }
+    if(x < 0) { x = -x; }
+    if (y < 0) { y = -y; }    
+    total = total || 0;
+    total += x;
+    count = count || 1;
+
+
+        if (count === y) { if( posOrNeg === 1 ){
+            return -total; }
+        return total;
+        }
+        
+        return multiply(x, y, ++count, total, posOrNeg);
+    
 };
 
 // // 13. Write a function that divides two numbers without using the / operator  or
 // // JavaScript's Math object.
-var divide = function (x, y, a) {
-    // a = a || x;
-    // //console.log(a);
-    // if(x * y < a){ return 'error'; }
-    // if (x * y === a) { return x; }
-    // //console.log(x * y);
-    // return divide(x - 0.001, y, a);
+var divide = function (x, y, count, rTotal ) {
+    if( x === 0 && y === 0 ){ return NaN;}
+    if( y > x || x === 0 ){ return 0; }
+    if( y === 0 ){ return x; }
+    if( x < 0 && y < 0 ){ return divide(-x, -y, count, rTotal) }
+    count = count || 1;
+    rTotal = rTotal || 0;
+    
+    if( rTotal + y > x ){ return rTotal + y - x; }
+    rTotal += y;
+    
+    
+    return divide(x, y, ++count, rTotal);
 
 };
 
@@ -325,8 +368,8 @@ return  document.getElementsByTagName(tag).length;
 var binarySearch = function(array, target, min = 0, max) {
 
 max = array.length;
-if(array[min] === target){return min;}
-if(min === max){return null;}
+if(array[min] === target){ return min; }
+if( min === max ){ return null; }
 return binarySearch(array, target, ++min, max)
 };
 
