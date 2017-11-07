@@ -359,6 +359,20 @@ var tagCount = function(tag, node, count = 0) {
 return  document.getElementsByTagName(tag).length;
 
 
+
+// element = node || document.body;
+// count = count || 0;
+
+// if (element.classList && _.contains(element.classList, tag)) {
+//     results++;
+// }
+// _.each(element.childNodes, function (node) {
+//     results += getElementsByClassName(tag, node, count);
+// });
+
+// return results;
+
+
 };
 
 // // 37. Write a function for binary search.
